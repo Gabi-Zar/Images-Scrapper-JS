@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Ma Web App</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <canvas id="stars-canvas" class="stars-canvas"></canvas>
+        <div class="app">
+            <main class="content">
+                <h1>Images Scrapper JS</h1>
+                <div class="view">
+                    <div class="horizontal-div">
+                        <form class="horizontal-div input-form" id="search-form">
+                            <input id="search-input" type="text" placeholder="Search For Images..." />
+                            <button onclick="search()">Search</button>
+                        </form>
+                        <button onclick="download()">Download Images</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>

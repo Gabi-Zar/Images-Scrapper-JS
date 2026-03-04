@@ -1,0 +1,100 @@
+* {
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+:root {
+    --border-color: #ffffff;
+    --text-color: #eee;
+    --transparent-white: rgba(255, 255, 255, 0.1);
+}
+
+body {
+    background: black;
+    color: var(--text-color);
+    height: 100vh;
+    overflow: hidden;
+}
+
+.app {
+    display: flex;
+    height: 100vh;
+}
+
+.content {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.content h1 {
+    font-size: 50px;
+    margin-bottom: 20px;
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+}
+
+.content button {
+    width: 200px;
+    height: 50px;
+    background: var(--transparent-white);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-color);
+    font-size: 20px;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content input {
+    flex: 1;
+    height: 40px;
+    padding: 0 12px;
+    background: var(--transparent-white);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-color);
+    font-size: 17px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.content form {
+    display: flex;
+    flex: 1;
+}
+
+.view {
+    width: 100%;
+    max-width: 1280px;
+
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    border: 1px solid var(--border-color);
+    border-radius: 32px;
+    padding: 40px;
+
+    z-index: 0;
+    overflow: auto;
+    backdrop-filter: blur(6px);
+}
+
+.horizontal-div {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.stars-canvas {
+    position: fixed;
+    z-index: -1;
+}
