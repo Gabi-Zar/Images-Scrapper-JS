@@ -1,5 +1,13 @@
 const starsNumber = 1000;
+const searchInput = document.getElementById("search-input");
+const searchForm = document.getElementById("search-form");
+
+let imagesUrls = [];
+
 starsCanvas(starsNumber);
+searchForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+});
 
 window.addEventListener("resize", () => {
     starsCanvas(starsNumber);
@@ -71,4 +79,18 @@ function starsCanvas(number) {
     }
 
     animate();
+}
+
+async function getImagesURL(query, offset = 0, count = 100) {
+    const url = `/api/getImagesURL?q=${encodeURIComponent(query)}&offset=${offset}&count=${count}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    for (const url of data) {
+        imagesUrls.push(url);
+    }
+    console.log(imagesUrls);
+}
+
+async function search() {
+    await getImagesURL(searchInput.value);
 }
