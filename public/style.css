@@ -85,7 +85,7 @@ body {
 
     z-index: 0;
     overflow: auto;
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(3px);
 }
 
 .horizontal-div {

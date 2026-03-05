@@ -28,7 +28,7 @@ function starsCanvas(number) {
     const stars = [];
 
     for (let i = 0; i < number; i++) {
-        stars.push(makeStar());
+        stars.push(makeStar(10000));
     }
 
     function animate() {
@@ -43,7 +43,7 @@ function starsCanvas(number) {
 
             const velocity = Math.sqrt(stars[i].dx ** 2 + stars[i].dy ** 2);
 
-            stars[i].radius *= 1 + 0.001 * velocity;
+            stars[i].radius *= 1 + 0.002 * velocity;
             stars[i].position.x += stars[i].dx;
             stars[i].position.y += stars[i].dy;
             stars[i].dx *= 1 + 0.002 * velocity;
@@ -61,19 +61,19 @@ function starsCanvas(number) {
         requestAnimationFrame(animate);
     }
 
-    function makeStar() {
+    function makeStar(initialTime = 0) {
         const angle = Math.random() * 2 * Math.PI;
-        const speed = Math.random() * 0.1 + 0.05;
-        const initialTime = Math.random() * 5000;
+        const speed = Math.random() * 0.2 + 0.05;
+        initialTime = Math.random() * initialTime;
         const dx = Math.cos(angle) * speed;
         const dy = Math.sin(angle) * speed;
 
         const star = {
             position: { x: centerX + dx * initialTime, y: centerY + dy * initialTime },
-            radius: Math.random() * 3,
+            radius: Math.random() * 0.5 + 0.0001 * initialTime,
             dx: dx,
             dy: dy,
-            color: 0,
+            color: 100 + 0.01 * initialTime,
         };
 
         return star;
