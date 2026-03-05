@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>Ma Web App</title>
+        <title>Images Scrapper JS</title>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="style.css" />
@@ -11,7 +11,7 @@
         <div class="app">
             <main class="content">
                 <h1>Images Scrapper JS</h1>
-                <div class="view">
+                <div class="view" id="view">
                     <div class="horizontal-div">
                         <form class="horizontal-div input-form" id="search-form">
                             <input id="search-input" type="text" placeholder="Search For Images..." />
@@ -19,9 +19,16 @@
                         </form>
                         <button onclick="download()">Download Images</button>
                     </div>
+                    <div id="images-div" class="images-div"></div>
                 </div>
             </main>
         </div>
+
+        <template id="image-template">
+            <div class="image-box">
+                <img id="image" />
+            </div>
+        </template>
 
         <script src="script.js"></script>
     </body>

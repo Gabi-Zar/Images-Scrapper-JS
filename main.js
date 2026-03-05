@@ -12,21 +12,45 @@ app.listen(PORT, () => {
 
 app.get("/api/getImagesURL", async (req, res) => {
     try {
-        const { q, offset = 0, count = 100 } = req.query;
+        let { q, offset = 1, count = 1000, smart = true } = req.query;
+        offset = Number(offset);
+        count = Number(count);
+        smart = smart === "true";
 
         if (!q) {
             return res.status(400).send("Missing 'q' parameter");
         }
 
         let imagesUrls = [];
+        let noNewCount = 0;
         do {
-            const url = `https://www.bing.com/images/async?q=${encodeURIComponent(q)}&offset=${offset}&count=30`;
+            const url = `https://www.bing.com/images/async?q=${encodeURIComponent(q)}&first=${String(offset)}`;
             const response = await fetch(url);
             const html = await response.text();
 
             const urls = extractImageUrls(html);
+            offset += urls.length;
+            let newImageCount = 0;
             for (const url of urls) {
-                imagesUrls.push(url);
+                if (!imagesUrls.includes(url)) {
+                    if (smart == true) {
+                        try {
+                            const response = await fetch(url, { method: "HEAD" });
+                            const contentType = response.headers.get("content-type");
+                            if (contentType && contentType.startsWith("image/")) {
+                                imagesUrls.push(url);
+                                newImageCount += 1;
+                            }
+                        } catch {}
+                    } else {
+                        imagesUrls.push(url);
+                        newImageCount += 1;
+                    }
+                }
+            }
+            noNewCount = newImageCount == 0 ? noNewCount + 1 : 0;
+            if (noNewCount > 32) {
+                break;
             }
         } while (imagesUrls.length < count);
 

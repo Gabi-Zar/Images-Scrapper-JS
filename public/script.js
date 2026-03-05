@@ -1,7 +1,8 @@
 const starsNumber = 1000;
 const searchInput = document.getElementById("search-input");
 const searchForm = document.getElementById("search-form");
-
+const imagesDiv = document.getElementById("images-div");
+const imageTemplate = document.getElementById("image-template");
 let imagesUrls = [];
 
 starsCanvas(starsNumber);
@@ -81,16 +82,20 @@ function starsCanvas(number) {
     animate();
 }
 
-async function getImagesURL(query, offset = 0, count = 100) {
-    const url = `/api/getImagesURL?q=${encodeURIComponent(query)}&offset=${offset}&count=${count}`;
+async function getImagesURL(query, offset, count, smart) {
+    const url = `/api/getImagesURL?q=${encodeURIComponent(query)}&offset=${offset}&count=${count}&smart=${smart}`;
     const response = await fetch(url);
     const data = await response.json();
+
     for (const url of data) {
         imagesUrls.push(url);
+        const imageTemplateCopy = imageTemplate.content.cloneNode(true);
+        imageTemplateCopy.getElementById("image").src = url;
+        imagesDiv.append(imageTemplateCopy);
     }
-    console.log(imagesUrls);
 }
 
 async function search() {
-    await getImagesURL(searchInput.value);
+    imagesDiv.replaceChildren();
+    await getImagesURL(searchInput.value, 1, 1000, true);
 }
