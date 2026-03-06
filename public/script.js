@@ -5,6 +5,7 @@ const imagesDiv = document.getElementById("images-div");
 const imageTemplate = document.getElementById("image-template");
 const loaderDiv = document.getElementById("loader-div");
 let imagesUrls = [];
+let uuid;
 
 starsCanvas(starsNumber);
 searchForm.addEventListener("submit", function (event) {
@@ -86,10 +87,15 @@ function starsCanvas(number) {
 async function getImagesURL(query, offset, count, smart) {
     const url = `/api/getImagesURL?q=${encodeURIComponent(query)}&offset=${offset}&count=${count}&smart=${smart}`;
     const response = await fetch(url);
+    if (!response.ok) {
+        console.error(await response.text());
+        return;
+    }
     const data = await response.json();
+    uuid = data.uuid;
 
     loaderDiv.classList.toggle("show");
-    for (const url of data) {
+    for (const url of data.urls) {
         imagesUrls.push(url);
         const imageTemplateCopy = imageTemplate.content.cloneNode(true);
         imageTemplateCopy.getElementById("image").src = url;
@@ -97,8 +103,31 @@ async function getImagesURL(query, offset, count, smart) {
     }
 }
 
+async function downloadImages(uuid) {
+    const url = `/api/downloadImages?uuid=${encodeURIComponent(uuid)}`;
+    const response = await fetch(url);
+    if (!response.ok) {
+        console.error(await response.text());
+        return;
+    }
+
+    const blob = await response.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = `${uuid}.zip`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(blobUrl);
+}
+
 async function search() {
     imagesDiv.replaceChildren();
     loaderDiv.classList.toggle("show");
     await getImagesURL(searchInput.value, 1, 1000, false);
+}
+
+async function download() {
+    await downloadImages(uuid);
 }

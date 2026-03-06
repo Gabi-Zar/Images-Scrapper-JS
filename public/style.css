@@ -3,11 +3,12 @@
     box-sizing: border-box;
     font-family: "Segoe UI", sans-serif;
     scrollbar-width: thin;
-    scrollbar-color: var(--border-color) transparent;
+    scrollbar-color: var(--secondary-color) transparent;
 }
 
 :root {
-    --border-color: #ffffff;
+    --primary-color: #ffffff;
+    --secondary-color: #888888;
     --text-color: #eee;
     --transparent-white: rgba(255, 255, 255, 0.1);
 }
@@ -28,7 +29,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--border-color);
+    background: var(--secondary-color);
     border-radius: 2px;
 }
 
@@ -58,7 +59,7 @@ body {
     width: 200px;
     height: 50px;
     background: var(--transparent-white);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--primary-color);
     border-radius: 12px;
     color: var(--text-color);
     font-size: 20px;
@@ -68,17 +69,40 @@ body {
     align-items: center;
 }
 
+.content button:hover {
+    border-color: var(--secondary-color);
+}
+
+.content button.square {
+    width: 50px;
+}
+
+.content button img {
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+    object-fit: cover;
+}
+
 .content input {
     flex: 1;
     height: 40px;
     padding: 0 12px;
     background: var(--transparent-white);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--primary-color);
     border-radius: 12px;
     color: var(--text-color);
     font-size: 17px;
     outline: none;
     transition: all 0.2s ease;
+}
+
+.content input:hover {
+    border-color: var(--secondary-color);
+}
+
+.content input:focus {
+    border-color: var(--secondary-color);
 }
 
 .content form {
@@ -88,7 +112,7 @@ body {
 
 .content hr {
     border: none;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--secondary-color);
     margin: 10px 0;
 }
 
@@ -100,7 +124,7 @@ body {
     flex-direction: column;
     flex: 1;
 
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--primary-color);
     border-radius: 32px;
     padding: 40px;
 
@@ -152,7 +176,7 @@ body {
 
 .loader {
     border: 16px solid var(--transparent-white);
-    border-top: 16px solid var(--border-color);
+    border-top: 16px solid var(--primary-color);
     border-radius: 50%;
     width: 300px;
     height: 300px;

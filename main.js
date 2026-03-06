@@ -1,8 +1,14 @@
 import express from "express";
 import * as cheerio from "cheerio";
+import { randomUUID } from "crypto";
+import axios from "axios";
+import archiver from "archiver";
+import mime from "mime";
 
 const app = express();
 const PORT = 3000;
+
+let cachedImagesUrls = {};
 
 app.use(express.static("public"));
 
@@ -56,7 +62,52 @@ app.get("/api/getImagesURL", async (req, res) => {
 
         imagesUrls = imagesUrls.slice(0, count);
 
-        res.send(imagesUrls);
+        const uuid = randomUUID();
+        cachedImagesUrls[uuid] = imagesUrls;
+        setTimeout(
+            () => {
+                delete cachedImagesUrls[uuid];
+            },
+            10 * 60 * 1000,
+        );
+
+        res.send({ uuid: uuid, urls: imagesUrls });
+    } catch (error) {
+        console.error(error);
+    }
+});
+
+app.get("/api/downloadImages", async (req, res) => {
+    try {
+        let { uuid } = req.query;
+        const imagesUrls = cachedImagesUrls[uuid];
+        if (!imagesUrls) {
+            return res.status(400).send("Invalid 'uuid'");
+        }
+
+        res.setHeader("Content-Type", "application/zip");
+        res.setHeader("Content-Disposition", `attachment; filename=${uuid}.zip`);
+
+        const archive = archiver("zip", { zlib: { level: 9 } });
+        archive.pipe(res);
+
+        let errorNumber = 0;
+        for (let i = 0; i < imagesUrls.length; i++) {
+            const url = imagesUrls[i];
+            try {
+                const response = await axios.get(url, { responseType: "arraybuffer", timeout: 5000 });
+                const contentType = response.headers["content-type"];
+                const extension = mime.getExtension(contentType) || url.split(".").pop();
+
+                archive.append(response.data, { name: `image-${i + 1 - errorNumber}.${extension}` });
+                //console.log(`image downloaded ${url}`);
+            } catch (error) {
+                errorNumber += 1;
+                console.warn(`Unable to download image ${url} : ${error}`);
+            }
+        }
+
+        await archive.finalize();
     } catch (error) {
         console.error(error);
     }
