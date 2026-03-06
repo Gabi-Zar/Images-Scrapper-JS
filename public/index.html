@@ -19,7 +19,14 @@
                         </form>
                         <button onclick="download()">Download Images</button>
                     </div>
-                    <div id="images-div" class="images-div"></div>
+                    <hr />
+                    <div class="loader-div" id="loader-div">
+                        <div class="loader" id="loader"></div>
+                        <h2>Scrapping in progress ...</h2>
+                    </div>
+                    <div class="scroll-div">
+                        <div id="images-div" class="images-div scroll-hidden"></div>
+                    </div>
                 </div>
             </main>
         </div>

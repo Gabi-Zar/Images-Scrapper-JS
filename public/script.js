@@ -3,6 +3,7 @@ const searchInput = document.getElementById("search-input");
 const searchForm = document.getElementById("search-form");
 const imagesDiv = document.getElementById("images-div");
 const imageTemplate = document.getElementById("image-template");
+const loaderDiv = document.getElementById("loader-div");
 let imagesUrls = [];
 
 starsCanvas(starsNumber);
@@ -87,6 +88,7 @@ async function getImagesURL(query, offset, count, smart) {
     const response = await fetch(url);
     const data = await response.json();
 
+    loaderDiv.classList.toggle("show");
     for (const url of data) {
         imagesUrls.push(url);
         const imageTemplateCopy = imageTemplate.content.cloneNode(true);
@@ -97,5 +99,6 @@ async function getImagesURL(query, offset, count, smart) {
 
 async function search() {
     imagesDiv.replaceChildren();
-    await getImagesURL(searchInput.value, 1, 1000, true);
+    loaderDiv.classList.toggle("show");
+    await getImagesURL(searchInput.value, 1, 1000, false);
 }
