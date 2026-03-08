@@ -1,17 +1,13 @@
 const starsNumber = 1000;
-const searchInput = document.getElementById("search-input");
-const searchForm = document.getElementById("search-form");
-const imagesDiv = document.getElementById("images-div");
-const imageTemplate = document.getElementById("image-template");
-const loaderDiv = document.getElementById("loader-div");
+const view = document.getElementById("view");
+const homeTemplate = document.getElementById("home-template");
+const settingsTemplate = document.getElementById("settings-template");
 let imagesUrls = [];
 let uuid;
 
-starsCanvas(starsNumber);
-searchForm.addEventListener("submit", function (event) {
-    event.preventDefault();
-});
+navigate("home");
 
+starsCanvas(starsNumber);
 window.addEventListener("resize", () => {
     starsCanvas(starsNumber);
 });
@@ -84,6 +80,23 @@ function starsCanvas(number) {
     animate();
 }
 
+function navigate(page) {
+    view.replaceChildren();
+    switch (page) {
+        case "home":
+            view.appendChild(homeTemplate.content.cloneNode(true));
+            const searchForm = document.getElementById("search-form");
+
+            searchForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+            });
+            break;
+        case "settings":
+            view.appendChild(settingsTemplate.content.cloneNode(true));
+            break;
+    }
+}
+
 async function getImagesURL(query, offset, count, smart) {
     const url = `/api/getImagesURL?q=${encodeURIComponent(query)}&offset=${offset}&count=${count}&smart=${smart}`;
     const response = await fetch(url);
@@ -94,13 +107,7 @@ async function getImagesURL(query, offset, count, smart) {
     const data = await response.json();
     uuid = data.uuid;
 
-    loaderDiv.classList.toggle("show");
-    for (const url of data.urls) {
-        imagesUrls.push(url);
-        const imageTemplateCopy = imageTemplate.content.cloneNode(true);
-        imageTemplateCopy.getElementById("image").src = url;
-        imagesDiv.append(imageTemplateCopy);
-    }
+    return data.urls;
 }
 
 async function downloadImages(uuid) {
@@ -123,9 +130,22 @@ async function downloadImages(uuid) {
 }
 
 async function search() {
+    const imageTemplate = document.getElementById("image-template");
+    const imagesDiv = document.getElementById("images-div");
+    const loaderDiv = document.getElementById("loader-div");
+    const searchInput = document.getElementById("search-input");
+
     imagesDiv.replaceChildren();
     loaderDiv.classList.toggle("show");
-    await getImagesURL(searchInput.value, 1, 1000, false);
+    const urls = await getImagesURL(searchInput.value, 1, 1000, false);
+
+    loaderDiv.classList.toggle("show");
+    for (const url of urls) {
+        imagesUrls.push(url);
+        const imageTemplateCopy = imageTemplate.content.cloneNode(true);
+        imageTemplateCopy.getElementById("image").src = url;
+        imagesDiv.appendChild(imageTemplateCopy);
+    }
 }
 
 async function download() {

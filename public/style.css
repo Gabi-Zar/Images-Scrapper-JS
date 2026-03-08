@@ -55,6 +55,14 @@ body {
     justify-content: center;
 }
 
+.content h2 {
+    font-size: 32px;
+    color: var(--text-color);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 .content button {
     width: 200px;
     height: 50px;

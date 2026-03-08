@@ -11,23 +11,7 @@
         <div class="app">
             <main class="content">
                 <h1>Images Scrapper JS</h1>
-                <div class="view" id="view">
-                    <div class="horizontal-div">
-                        <form class="horizontal-div input-form" id="search-form">
-                            <input id="search-input" type="text" placeholder="Search For Images..." />
-                            <button onclick="search()">Search</button>
-                        </form>
-                        <button class="square" onclick="download()"><img src="assets/downloadButton.png" /></button>
-                    </div>
-                    <hr />
-                    <div class="loader-div" id="loader-div">
-                        <div class="loader" id="loader"></div>
-                        <h2>Scrapping in progress ...</h2>
-                    </div>
-                    <div class="scroll-div">
-                        <div id="images-div" class="images-div scroll-hidden"></div>
-                    </div>
-                </div>
+                <div class="view" id="view"></div>
             </main>
         </div>
 
@@ -35,6 +19,33 @@
             <div class="image-box">
                 <img id="image" />
             </div>
+        </template>
+
+        <template id="home-template">
+            <div class="horizontal-div">
+                <form class="horizontal-div input-form" id="search-form">
+                    <input id="search-input" type="text" placeholder="Search For Images..." />
+                    <button onclick="search()">Search</button>
+                </form>
+                <button class="square" onclick="download()"><img src="assets/downloadButton.png" /></button>
+                <button class="square" onclick="navigate('settings')"><img src="assets/settingsButton.png" /></button>
+            </div>
+            <hr />
+            <div class="loader-div" id="loader-div">
+                <div class="loader" id="loader"></div>
+                <h2>Scrapping in progress ...</h2>
+            </div>
+            <div class="scroll-div">
+                <div id="images-div" class="images-div scroll-hidden"></div>
+            </div>
+        </template>
+
+        <template id="settings-template">
+            <div class="horizontal-div">
+                <button class="square" onclick="navigate('home')"><img src="assets/leftArrowButton.png" /></button>
+                <h2>Settings</h2>
+            </div>
+            <hr />
         </template>
 
         <script src="script.js"></script>
