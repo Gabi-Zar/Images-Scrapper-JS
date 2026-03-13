@@ -4,6 +4,10 @@ const homeTemplate = document.getElementById("home-template");
 const settingsTemplate = document.getElementById("settings-template");
 let imagesUrls = [];
 let uuid;
+let imagesProvider = "Bing";
+let imagesOffset = 1;
+let maxImages = 1000;
+let smartMode = false;
 
 navigate("home");
 
@@ -93,6 +97,26 @@ function navigate(page) {
             break;
         case "settings":
             view.appendChild(settingsTemplate.content.cloneNode(true));
+            setProviderButton();
+            toggleSelectedListButton("provider-menu", imagesProvider);
+
+            const maxImagesInput = document.getElementById("max-images-input");
+            maxImagesInput.value = maxImages;
+            maxImagesInput.addEventListener("input", function (event) {
+                maxImages = maxImagesInput.value;
+            });
+
+            const offsetInput = document.getElementById("offset-input");
+            offsetInput.value = imagesOffset;
+            offsetInput.addEventListener("input", function (event) {
+                imagesOffset = offsetInput.value;
+            });
+
+            const smartModeCheckbox = document.getElementById("smart-mode");
+            smartModeCheckbox.checked = smartMode;
+            smartModeCheckbox.addEventListener("change", function () {
+                smartMode = this.checked;
+            });
             break;
     }
 }
@@ -137,7 +161,7 @@ async function search() {
 
     imagesDiv.replaceChildren();
     loaderDiv.classList.toggle("show");
-    const urls = await getImagesURL(searchInput.value, 1, 1000, false);
+    const urls = await getImagesURL(searchInput.value, imagesOffset, maxImages, smartMode);
 
     loaderDiv.classList.toggle("show");
     for (const url of urls) {
@@ -150,4 +174,39 @@ async function search() {
 
 async function download() {
     await downloadImages(uuid);
+}
+
+function toggleProviderMenu() {
+    const providerMenu = document.getElementById("provider-menu");
+    if (providerMenu) {
+        providerMenu.classList.toggle("show");
+    }
+}
+
+async function setProviderButton() {
+    const providerButton = document.getElementById("provider-button");
+    if (providerButton) {
+        providerButton.innerHTML = `<img src="assets/${imagesProvider}.svg" class="icons" /> ${imagesProvider}`;
+    }
+}
+
+function changeProvider(provider) {
+    imagesProvider = provider;
+    toggleProviderMenu();
+    toggleSelectedListButton("provider-menu", provider);
+    setProviderButton();
+}
+
+function toggleSelectedListButton(ListMenuId, buttonId) {
+    const listMenu = document.getElementById(ListMenuId);
+    if (listMenu) {
+        Array.from(listMenu.children).forEach((child) => {
+            child.classList.remove("selected");
+        });
+    }
+
+    const listButton = document.getElementById(buttonId);
+    if (listButton) {
+        listButton.classList.toggle("selected");
+    }
 }

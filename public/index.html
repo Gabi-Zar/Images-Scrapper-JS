@@ -43,9 +43,41 @@
         <template id="settings-template">
             <div class="horizontal-div">
                 <button class="square" onclick="navigate('home')"><img src="assets/leftArrowButton.png" /></button>
-                <h2>Settings</h2>
+                <h2 class="sub-title">Settings</h2>
             </div>
             <hr />
+            <div style="height: 20px"></div>
+            <div class="setting-row">
+                <label>Images provider: </label>
+                <div class="list-div">
+                    <div class="longer-button fake-button" id="provider-button" onclick="toggleProviderMenu()"></div>
+                    <div class="list-menu longer-button" id="provider-menu">
+                        <li id="Bing" onclick="changeProvider('Bing')"><img src="assets/Bing.svg" class="icons" /> Bing</li>
+                        <li id="Bing" onclick="changeProvider('Bing')"><img src="assets/Bing.svg" class="icons" /> Bing</li>
+                    </div>
+                </div>
+            </div>
+            <div class="setting-description">Select where the images will be scraped from.</div>
+            <div class="setting-row">
+                <label>Max number of images:</label>
+                <input id="max-images-input" type="text" />
+            </div>
+            <div class="setting-description">Maximum number of images to scrape from the provider.</div>
+            <div class="setting-row">
+                <label>Images offset:</label>
+                <input id="offset-input" type="text" />
+            </div>
+            <div class="setting-description">Leave 1 if you're unsure. Higher values skip images.</div>
+            <div class="setting-row">
+                <label>Use Smart mode</label>
+                <div class="setting-control">
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="smart-mode" id="smart-mode" />
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="setting-description">Verifies that images can be downloaded before returning URLs. Slower but prevents broken or black images.</div>
         </template>
 
         <script src="script.js"></script>
