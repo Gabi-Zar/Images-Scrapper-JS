@@ -4,13 +4,32 @@ import { randomUUID } from "crypto";
 import axios from "axios";
 import archiver from "archiver";
 import mime from "mime";
+import { rateLimit } from "express-rate-limit";
+import "dotenv/config";
 
 const app = express();
 const PORT = 3000;
+const useRateLimit = process.env.USE_RATE_LIMIT === "true";
+const getImagesLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 min
+    limit: 100,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+});
+const downloadLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 min
+    limit: 5,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+});
 
 let cachedImagesUrls = {};
 
 app.use(express.static("public"));
+if (useRateLimit) {
+    app.use("/api/getImagesURL", getImagesLimiter);
+    app.use("/api/downloadImages", downloadLimiter);
+}
 
 app.listen(PORT, () => {
     console.log(`Server launched on http://localhost:${PORT}`);
@@ -95,7 +114,7 @@ app.get("/api/downloadImages", async (req, res) => {
         for (let i = 0; i < imagesUrls.length; i++) {
             const url = imagesUrls[i];
             try {
-                const response = await axios.get(url, { responseType: "arraybuffer", timeout: 5000 });
+                const response = await axios.get(url, { responseType: "stream", timeout: 5000 });
                 const contentType = response.headers["content-type"];
                 const extension = mime.getExtension(contentType) || url.split(".").pop();
 

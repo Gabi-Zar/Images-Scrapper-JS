@@ -2,7 +2,8 @@ const starsNumber = 1000;
 const view = document.getElementById("view");
 const homeTemplate = document.getElementById("home-template");
 const settingsTemplate = document.getElementById("settings-template");
-let imagesUrls = [];
+let cachedUrls = [];
+let cachedQuery = "";
 let uuid;
 let imagesProvider = "Bing";
 let imagesOffset = 1;
@@ -90,10 +91,14 @@ function navigate(page) {
         case "home":
             view.appendChild(homeTemplate.content.cloneNode(true));
             const searchForm = document.getElementById("search-form");
+            const searchInput = document.getElementById("search-input");
 
             searchForm.addEventListener("submit", function (event) {
                 event.preventDefault();
             });
+
+            fillImagesGrid();
+            searchInput.value = cachedQuery;
             break;
         case "settings":
             view.appendChild(settingsTemplate.content.cloneNode(true));
@@ -131,7 +136,7 @@ async function getImagesURL(query, offset, count, smart) {
     const data = await response.json();
     uuid = data.uuid;
 
-    return data.urls;
+    cachedUrls = data.urls;
 }
 
 async function downloadImages(uuid) {
@@ -154,22 +159,17 @@ async function downloadImages(uuid) {
 }
 
 async function search() {
-    const imageTemplate = document.getElementById("image-template");
     const imagesDiv = document.getElementById("images-div");
     const loaderDiv = document.getElementById("loader-div");
     const searchInput = document.getElementById("search-input");
+    cachedQuery = searchInput.value;
 
     imagesDiv.replaceChildren();
     loaderDiv.classList.toggle("show");
-    const urls = await getImagesURL(searchInput.value, imagesOffset, maxImages, smartMode);
+    await getImagesURL(cachedQuery, imagesOffset, maxImages, smartMode);
 
     loaderDiv.classList.toggle("show");
-    for (const url of urls) {
-        imagesUrls.push(url);
-        const imageTemplateCopy = imageTemplate.content.cloneNode(true);
-        imageTemplateCopy.getElementById("image").src = url;
-        imagesDiv.appendChild(imageTemplateCopy);
-    }
+    fillImagesGrid();
 }
 
 async function download() {
@@ -208,5 +208,20 @@ function toggleSelectedListButton(ListMenuId, buttonId) {
     const listButton = document.getElementById(buttonId);
     if (listButton) {
         listButton.classList.toggle("selected");
+    }
+}
+
+function fillImagesGrid() {
+    if (!cachedUrls) {
+        return;
+    }
+
+    const imageTemplate = document.getElementById("image-template");
+    const imagesDiv = document.getElementById("images-div");
+
+    for (const url of cachedUrls) {
+        const imageTemplateCopy = imageTemplate.content.cloneNode(true);
+        imageTemplateCopy.getElementById("image").src = url;
+        imagesDiv.appendChild(imageTemplateCopy);
     }
 }
