@@ -168,6 +168,7 @@ body {
     grid-template-columns: repeat(auto-fill, 150px);
     gap: 20px;
     justify-content: center;
+    margin: 25px 0;
 }
 
 .image-box {
@@ -179,7 +180,7 @@ body {
 }
 
 .image-box:hover {
-    transform: scale(3);
+    transform: scale(1.2);
     border-radius: 8px;
 }
 

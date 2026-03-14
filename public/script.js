@@ -5,10 +5,10 @@ const settingsTemplate = document.getElementById("settings-template");
 let cachedUrls = [];
 let cachedQuery = "";
 let uuid;
-let imagesProvider = "Bing";
-let imagesOffset = 1;
-let maxImages = 1000;
-let smartMode = false;
+let imagesProvider = getCookie("imagesProvider") || "Bing";
+let imagesOffset = getCookie("imagesOffset") || 1;
+let maxImages = getCookie("maxImages") || 1000;
+let smartMode = getCookie("smartMode") || false;
 
 navigate("home");
 
@@ -109,18 +109,21 @@ function navigate(page) {
             maxImagesInput.value = maxImages;
             maxImagesInput.addEventListener("input", function (event) {
                 maxImages = maxImagesInput.value;
+                setCookie("maxImages", maxImagesInput.value);
             });
 
             const offsetInput = document.getElementById("offset-input");
             offsetInput.value = imagesOffset;
             offsetInput.addEventListener("input", function (event) {
                 imagesOffset = offsetInput.value;
+                setCookie("imagesOffset", offsetInput.value);
             });
 
             const smartModeCheckbox = document.getElementById("smart-mode");
             smartModeCheckbox.checked = smartMode;
             smartModeCheckbox.addEventListener("change", function () {
                 smartMode = this.checked;
+                setCookie("smartMode", this.checked);
             });
             break;
     }
@@ -192,6 +195,7 @@ async function setProviderButton() {
 
 function changeProvider(provider) {
     imagesProvider = provider;
+    setCookie("imagesProvider", provider);
     toggleProviderMenu();
     toggleSelectedListButton("provider-menu", provider);
     setProviderButton();
@@ -221,7 +225,24 @@ function fillImagesGrid() {
 
     for (const url of cachedUrls) {
         const imageTemplateCopy = imageTemplate.content.cloneNode(true);
+        imageTemplateCopy.getElementById("link").href = url;
         imageTemplateCopy.getElementById("image").src = url;
         imagesDiv.appendChild(imageTemplateCopy);
+    }
+}
+
+function setCookie(name, value) {
+    const expires = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString();
+    document.cookie = `${name}=${value}; expires=${expires}; SameSite=Lax`;
+}
+
+function getCookie(name) {
+    const cookies = document.cookie.split("; ");
+
+    for (const cookie of cookies) {
+        const [key, value] = cookie.split("=");
+        if (key == name) {
+            return value;
+        }
     }
 }
