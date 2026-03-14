@@ -22,9 +22,13 @@ const downloadLimiter = rateLimit({
     standardHeaders: "draft-8",
     legacyHeaders: false,
 });
-
+const headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Accept-Language": "en-US,en;q=0.9",
+};
 let cachedImagesUrls = {};
 
+app.set("trust proxy", 1);
 app.use(express.static("public"));
 if (useRateLimit) {
     app.use("/api/getImagesURL", getImagesLimiter);
@@ -50,7 +54,7 @@ app.get("/api/getImagesURL", async (req, res) => {
         let noNewCount = 0;
         do {
             const url = `https://www.bing.com/images/async?q=${encodeURIComponent(q)}&first=${String(offset)}`;
-            const response = await fetch(url);
+            const response = await fetch(url, { headers: headers });
             const html = await response.text();
 
             const urls = extractImageUrls(html);
@@ -60,7 +64,7 @@ app.get("/api/getImagesURL", async (req, res) => {
                 if (!imagesUrls.includes(url)) {
                     if (smart == true) {
                         try {
-                            const response = await fetch(url, { method: "HEAD" });
+                            const response = await fetch(url, { method: "HEAD", headers: headers });
                             const contentType = response.headers.get("content-type");
                             if (contentType && contentType.startsWith("image/")) {
                                 imagesUrls.push(url);
@@ -114,7 +118,7 @@ app.get("/api/downloadImages", async (req, res) => {
         for (let i = 0; i < imagesUrls.length; i++) {
             const url = imagesUrls[i];
             try {
-                const response = await axios.get(url, { responseType: "stream", timeout: 5000 });
+                const response = await axios.get(url, { responseType: "stream", timeout: 5000, headers: headers });
                 const contentType = response.headers["content-type"];
                 const extension = mime.getExtension(contentType) || url.split(".").pop();
 
